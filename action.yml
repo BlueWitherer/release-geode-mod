@@ -34,6 +34,9 @@ outputs:
   url:
     description: The URL of the GitHub release.
     value: ${{ steps.release.outputs.url }}
+  changelog:
+    description: The changelog extracted from the changelog.md
+    value: ${{ steps.changelog.outputs.changelog }}
 
 runs:
   using: composite
