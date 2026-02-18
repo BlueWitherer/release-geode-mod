@@ -24,11 +24,11 @@ inputs:
   workflow:
     description: The workflow file in .github/workflows to use for the release. Defaults to the first file running the build-geode-mod action.
     required: false
-    default: ''
+    default: ""
   branch:
     description: The branch to pick the artifacts from. Defaults to all branches.
     required: false
-    default: ''
+    default: ""
 
 outputs:
   url:
@@ -128,9 +128,9 @@ runs:
           WORKFLOW=${{ inputs.workflow }}
         fi
         if [ -n "${{ inputs.branch }}" ]; then
-          RUNID=$(gh run list --repo ${{ github.repository }} --workflow $WORKFLOW --branch ${{ inputs.branch }} --status completed --json event --json databaseId --jq '.[] | select(.event!="pull_request") | .databaseId' | head -n 1 || true)
+          RUNID=$(gh run list --repo ${{ github.repository }} --workflow $WORKFLOW --branch ${{ inputs.branch }} --status success  --json event --json databaseId --json createdAt --jq '[.[] | select(.event!="pull_request")] | sort_by(.createdAt) | reverse | .[0].databaseId' || true)
         else
-          RUNID=$(gh run list --repo ${{ github.repository }} --workflow $WORKFLOW --status completed --json event --json databaseId --jq '.[] | select(.event!="pull_request") | .databaseId' | head -n 1 || true)
+          RUNID=$(gh run list --repo ${{ github.repository }} --workflow $WORKFLOW --status success  --json event --json databaseId --json createdAt --jq '[.[] | select(.event!="pull_request")] | sort_by(.createdAt) | reverse | .[0].databaseId' || true)
         fi
         if [ -z "$RUNID" ]; then
           echo -e "\e[38;2;255;0;0mError:\e[0m No runs found"
